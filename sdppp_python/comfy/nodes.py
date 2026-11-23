@@ -32,13 +32,18 @@ class SDPPPOptional(dict):
         # self.contains_key_arr = args[0] # list of keys that can be existed in the dict
         self.optional_dict = optional_dict
         self.visible_dict = visible_dict
-        for key in self.visible_dict.keys():
-            self[key] = self.visible_dict[key]
-            
+        for key, value in self.visible_dict.items():
+            self[key] = value
+        for key, value in self.optional_dict.items():
+            if key not in self:
+                self[key] = value
+
     def __contains__(self, key):
-        return key in self.visible_dict.keys() or key in self.optional_dict.keys()
+        return dict.__contains__(self, key) or key in self.visible_dict.keys() or key in self.optional_dict.keys()
 
     def __getitem__(self, key):
+        if dict.__contains__(self, key):
+            return dict.__getitem__(self, key)
         if key in self.visible_dict.keys():
             return self.visible_dict[key]
         return self.optional_dict[key]
